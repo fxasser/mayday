@@ -21,36 +21,19 @@ Mayday
 
 
 :: Story Stylesheet [stylesheet]
-/* =================================================================
-   MAYDAY - story stylesheet (Harlowe 3)
-
-   Layout is a visual-novel stage over the den background:
-     wide screens   Astrea stands on the left, the text sits on the right
-     phones         Astrea stands on the top edge of the text panel
-
-   Art goes in an "images" folder that sits next to the published
-   .html file:  images/bg-den.png, images/astrea-neutral.png, ...
-
-   Markup used in passages:
-     //like this//   the italic "tell" line after a choice (dimmed)
-     *like this*     ordinary emphasis
-     <span class="radio">   recorder / radio transmissions
-     <span class="mimic">   Astrea speaking in YOUR voice
-   Passage tags that change the look:
-     dark      no den behind the text (prologue, ending cards)
-     outdoors  the ridge at dawn instead of the den
-     title     the title screen (sits higher so the tracker fits)
-     system  invisible passage (the ending router)
-   ================================================================= */
+/* Images live in an "images" folder next to the published html file.
+   Passage tags used here: dark (no den behind the text), outdoors (ridge
+   background), title, and system (the hidden ending router). In passages,
+   span.radio is a radio transmission and span.mimic is her copying your voice. */
 
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Spectral:ital,wght@0,400;0,500;1,400;1,500&display=swap");
 
 :root {
-  --den:    #07141a;  /* wet stone in blue light            */
-  --lumen:  #8ff0d8;  /* the glowing growths: choices, glow  */
-  --bone:   #e6dcc6;  /* the splint: body text              */
-  --lichen: #87a19f;  /* quieter text                       */
-  --beacon: #ff5a48;  /* the emergency beacon: radio only   */
+  --den: #07141a;
+  --lumen: #8ff0d8;
+  --bone: #e6dcc6;
+  --lichen: #87a19f;
+  --beacon: #ff5a48;
 }
 
 html, body {
@@ -72,7 +55,7 @@ tw-story {
   line-height: 1.7;
 }
 
-/* The den, fixed behind everything. Fades to black in [dark] passages. */
+/* Den background. Fades out on dark passages. */
 tw-story::before {
   content: "";
   position: fixed;
@@ -86,7 +69,7 @@ tw-story::before {
 }
 tw-story[tags~="dark"]::before { opacity: 0; }
 
-/* The ridge at dawn. Sits over the den and cross-fades in for [outdoors]. */
+/* Ridge background. Fades in over the den on outdoors passages. */
 tw-story::after {
   content: "";
   position: fixed;
@@ -102,11 +85,9 @@ tw-story::after {
 }
 tw-story[tags~="outdoors"]::after { opacity: 1; }
 
-/* Hides Harlowe's undo/redo arrows so choices stick.
-   Delete this line if you want them back. */
+/* Hide undo/redo so choices stick. Delete this line to bring them back. */
 tw-sidebar { display: none; }
 
-/* ---------- The text panel ---------- */
 tw-passage {
   position: relative;
   z-index: 1;
@@ -119,8 +100,7 @@ tw-passage {
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
 }
 
-/* The one thing that moves on its own: the panel's edge breathes,
-   slow, like the light in the den walls. */
+/* Slow pulse along the top edge of the text panel. */
 tw-passage::before {
   content: "";
   position: absolute;
@@ -139,7 +119,6 @@ tw-passage::before {
   50%      { opacity: 0.8; }
 }
 
-/* ---------- Astrea's portrait ---------- */
 tw-passage img.portrait {
   position: absolute;
   left: 50%;
@@ -155,7 +134,7 @@ tw-passage img.portrait {
 }
 tw-passage img.portrait + br { display: none; }
 
-/* Wide screens: split the stage. She stays in view while you read. */
+/* Wide screens: portrait on the left, text on the right. */
 @media (min-width: 60rem) and (min-aspect-ratio: 1/1) {
   :root {
     --stage: min(100vw, 88rem);
@@ -176,7 +155,6 @@ tw-passage img.portrait + br { display: none; }
   }
 }
 
-/* ---------- Text styles ---------- */
 tw-passage i { color: var(--lichen); }
 tw-passage em { font-style: italic; }
 
@@ -190,7 +168,7 @@ tw-passage .radio {
   padding: 0.1em 0 0.1em 0.8em;
 }
 
-/* Her voice wearing yours: two colors slightly out of register */
+/* Red and teal offset, for her copying your voice. */
 tw-passage .mimic {
   font-style: italic;
   color: var(--bone);
@@ -202,7 +180,6 @@ tw-passage .note {
   color: var(--lichen);
 }
 
-/* ---------- Choices ---------- */
 tw-story tw-link,
 tw-story tw-link.visited,
 tw-story .enchantment-link {
@@ -242,7 +219,6 @@ tw-story tw-link:focus-visible {
   outline-offset: 4px;
 }
 
-/* ---------- Dark passages: no den, no panel ---------- */
 tw-story[tags~="dark"] tw-passage {
   margin: 20vh auto 10vh;
   background: none;
@@ -251,10 +227,9 @@ tw-story[tags~="dark"] tw-passage {
 tw-story[tags~="dark"] tw-passage::before { display: none; }
 tw-story[tags~="title"] tw-passage { margin-top: 8vh; }
 
-/* The ending router should never flash on screen */
+/* Keep the ending router from flashing on screen. */
 tw-story[tags~="system"] tw-passage { visibility: hidden; }
 
-/* ---------- Title ---------- */
 tw-passage .title-mark {
   margin: 0 0 1.6rem;
   font-weight: 400;
@@ -265,7 +240,6 @@ tw-passage .title-mark {
   color: var(--bone);
 }
 tw-passage .title-mark + br { display: none; }
-/* Three calls sent into the dark, each fainter. Nobody answers. */
 tw-passage .title-mark span { display: block; opacity: 0; }
 tw-passage .title-mark span:nth-child(1) { animation: call-1 1.6s ease 0.2s forwards; }
 tw-passage .title-mark span:nth-child(2) { animation: call-2 1.6s ease 1.2s forwards; }
@@ -274,7 +248,6 @@ tw-passage .title-mark span:nth-child(3) { animation: call-3 1.6s ease 2.2s forw
 @keyframes call-2 { to { opacity: 0.38; } }
 @keyframes call-3 { to { opacity: 0.1; } }
 
-/* ---------- Ending cards ---------- */
 tw-passage .ending { margin: 2rem 0 0.4rem; }
 tw-passage .ending p { margin: 0; }
 tw-passage .ending-name {
@@ -285,7 +258,6 @@ tw-passage .ending-name {
 }
 tw-passage .ending-hint { margin-top: 0.6rem !important; }
 
-/* ---------- Title screen: endings found + her name ---------- */
 tw-passage .tracker {
   display: flex;
   flex-wrap: wrap;
@@ -312,7 +284,6 @@ tw-passage .her-name {
 tw-passage .tracker .found { color: var(--bone); }
 tw-passage .her-name.found { color: var(--lumen); }
 
-/* ---------- Small screens ---------- */
 @media (max-width: 38rem) {
   tw-passage {
     width: calc(100% - 1rem);
@@ -337,16 +308,15 @@ tw-passage .her-name.found { color: var(--lumen); }
 
 
 :: Story JavaScript [script]
-/* Preload every image so expression swaps don't flicker on first view. */
+/* Preload images so expression changes don't flicker. */
 (function () {
   ["neutral", "curious", "suspicious", "hungry", "snarl", "startled", "soft", "soft-dawn"]
     .forEach(function (face) { new Image().src = "images/astrea-" + face + ".png"; });
   ["den", "ridge"].forEach(function (bg) { new Image().src = "images/bg-" + bg + ".png"; });
 })();
 
-/* Endings tracker. Each ending card carries data-ending="Name"; seeing one
-   records it (kept in the browser between visits). The title screen then
-   fills in every [data-ending] slot that has been found. */
+/* Endings tracker: ending cards carry data-ending, and the title screen
+   fills in the slots for endings found. Saved in the browser (localStorage). */
 (function () {
   var KEY = "mayday-endings-found";
   var found = [];
@@ -968,12 +938,7 @@ She hears it too. Her head tilts, slowly, the way it did when she listened to th
 
 
 :: Fate [system] {"position":"3075,260","size":"100,100"}
-<!-- ENDING ROUTER. Players never see this passage.
-     threat = how dangerous you seemed, from grabbing, demanding and weapons
-     appeal = how much you seemed like prey, from begging, panicking and fleeing
-     bond   = trust earned at key moments
-     Change the numbers below to make endings easier or harder to reach.
-     Crew needs real trust AND a calm finish, so it checks bond and both meters. -->
+<!-- Ending router. Thresholds below decide how hard each ending is to reach. -->
 {(if: $threat >= 3 and $appeal >= 3)[(goto: "Standoff")]
 (else-if: $threat >= 5)[(goto: "Too Dangerous")]
 (else-if: $appeal >= 5)[(goto: "Too Soft")]
